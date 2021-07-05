@@ -5,29 +5,28 @@ const errorHandler = require('./middleware/error.middleware')
 
 const connectDatabase = require('./config/database.config');
 
-connectDatabase().then(() => {
-  const app = express();
+connectDatabase()
 
-  app.use(bodyParser.json())
-  app.use(cors)
+const app = express();
 
-  app.get('/', (req, res) => {
-    res.send('API IS RUNNING');
-  });
+app.use(bodyParser.json())
 
-  app.use('/api/auth', require('./routes/auth.route'));
-  app.use('/api/party', require('./routes/party.route'));
+app.get('/', (req, res) => {
+  res.send('API IS RUNNING');
+});
 
-  app.use(errorHandler)
+app.use('/api/auth', require('./routes/auth.route'));
+app.use('/api/party', require('./routes/party.route'));
 
-  const PORT = process.env.PORT || 80;
+app.use(errorHandler)
 
-  const server = app.listen(PORT, () => {
-    console.log(`Server has been started on PORT=${PORT}`);
-  });
+const PORT = process.env.PORT || 3000;
 
-  process.on("unhandledRejection", (err) => {
-    console.log(`Logged error: ${err.message}`);
-    server.close(() => process.exit(1));
-  });
-}).catch((err) => console.log(err.message));
+const server = app.listen(PORT, () => {
+  console.log(`Server has been started on PORT=${PORT}`);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.log(`Logged error: ${err.message}`);
+  server.close(() => process.exit(1));
+});

@@ -38,14 +38,14 @@ exports.joinUserInParty = async (req, res, next) => {
             } else if (!party) {
                 return next(new ErrorResponse('Invalid party code', 404));
             } else {
-                party.findOne({ members: [userId] }, async (err, member) => {
+                PartyRoom.findOne({ members: userId }, async (err, member) => {
                    if (err) {
                        return next(new ErrorResponse(err.message, 500));
                    }  else if (member) {
                        return next(new ErrorResponse('Your already in party', 400));
                    } else {
                        const updateMembers = {
-                           $push: {"$[].members": `${userId}`}
+                           $push: {"members": userId}
                        };
                        await PartyRoom.update(updateMembers);
                        await sendResponse(party, 200, res);
