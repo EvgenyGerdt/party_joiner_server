@@ -13,11 +13,11 @@ const PartyRoomSchema = new Schema({
     },
     name: {
         type: String,
-        required: [true, 'Please, provide party ID'],
+        required: [true, 'Please, provide party name'],
         maxlength: 255
     },
     willHappenAt: {
-        type: String,
+        type: Date,
         required: [true, 'Please, provide party Date']
     },
     location: {
