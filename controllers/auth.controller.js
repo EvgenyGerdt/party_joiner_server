@@ -3,23 +3,29 @@ const User = require('../models/User.model');
 const ErrorResponse = require('../utils/errorResponse');
 const { sendResponse } = require('../utils/successResponse');
 
+const log = require('../config/log4js.config');
+
 // POST Registration
 exports.register = async (req, res, next) => {
     const {username, password, secretWord} = req.body;
     try {
         User.findOne({ username: username }, async (err, user) => {
             if (err) {
+                log.error(err.message);
                 return next(new ErrorResponse(err.message, 500));
             } else if (user) {
+                log.warn(`${user} already exists`);
                 return next(new ErrorResponse('User already exists', 400));
             } else {
                 const user = await User.create({
                     username, password, secretWord
                 });
+                log.info(user);
                 await sendResponse(user, 200, res);
             }
         })
     } catch (err) {
+        log.error(err.message);
         return next(new ErrorResponse(err.message, 500));
     }
 }
@@ -38,20 +44,31 @@ exports.login = async (req, res, next) => {
     try {
         await User.findOne({ username: authCandidate.username }, async (err, user) => {
             if (err) {
+                log.error(err.message);
                 return next(new ErrorResponse(err.message, 500));
             } else if (!user) {
+                log.warn(`${user} not found`);
                 return next(new ErrorResponse('Invalid credentials', 404));
             } else {
                 const isMatch = await user.matchPasswords(authCandidate.password);
 
                 if(!isMatch) {
+                    log.warn(`${user} invalid credentials`)
                     return next(new ErrorResponse('Invalid credentials', 404));
                 } else {
-                    await sendResponse(user, 200, res);
+                    await User.findOne({ username: authCandidate.username }, async (err, user) => {
+                        if (err) {
+                            log.error(err.message);
+                            return next(new ErrorResponse(err.message, 500));
+                        } else {
+                            await sendResponse(user, 200, res);
+                        }
+                    })
                 }
             }
-        })
+        }).select("password");
     } catch (err) {
+        log.error(err.message);
         return next(new ErrorResponse(err.message, 500));
     }
 }
