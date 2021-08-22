@@ -11,6 +11,12 @@ const UserSchema = new Schema({
         unique: true,
         maxlength: 50
     },
+    email: {
+        type: String,
+        required: [true, "Please, provide your email"],
+        unique: true,
+        maxlength: 255,
+    },
     password: {
         type: String,
         required: [true, "Please, provide your password"],
@@ -29,7 +35,11 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now,
         select: false
-    }
+    },
+    resetPasswordCode: {
+        type: String,
+        default: undefined,
+    },
 });
 
 UserSchema.pre("save", async function (next) {
