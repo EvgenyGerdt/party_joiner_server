@@ -10,6 +10,7 @@ connectDatabase();
 const app = express();
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
   log.info('User connected to server', req.headers);
