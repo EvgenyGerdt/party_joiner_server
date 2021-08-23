@@ -160,6 +160,7 @@ exports.resetPassword = async (req, res, next) => {
                 return next(new ErrorResponse("Пользователь не найден", 500));
             } else {
                 await user.updateOne({ password: await user.getHashedPassword(password) });
+                await sendResponse({message: `Password successfully changed for ${email}`}, 200, res);
             }
         })
     } catch (err) {
