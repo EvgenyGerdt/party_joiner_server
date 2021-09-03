@@ -17,5 +17,8 @@
     "log4js": "^6.3.0",
     "mongoose": "^5.13.2",
     "nodemailer": "^6.6.3"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5"
   }
 }
